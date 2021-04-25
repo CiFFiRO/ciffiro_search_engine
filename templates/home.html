@@ -1,10 +1,120 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{% static 'home.js' %}"></script>
+      <script type="text/javascript">
+          $(document).ready(function () {
+            home_setup();
+          });
+      </script>
+    <style>
+    .bottom-buffer { margin-bottom:10px; }
+    .left-buffer-20 { margin-left:20px; }
+    .top-buffer-10 { margin-top:10px; }
+    </style>
 </head>
 <body>
-
+{% load pages_extras %}
+<div class="container">
+    <div class="row text-center top-buffer-10 bottom-buffer">
+        <div class="col">
+            <input id="requestInputId" maxlength="75" class="top-buffer-10" size="52" placeholder="Запрос" value="{{ request }}">
+            <div class="btn-group btn-group-lg left-buffer-20" role="group">
+                <button type="button" class="btn btn-light" id="searchButtonId">Найти</button>
+              </div>
+        </div>
+    </div>
+    {% if is_request %}
+    <div class="row">
+        <div class="col">
+            Результатов {{ total_states }} за {{ request_time|floatformat:2 }} сек.
+        </div>
+    </div>
+    {% endif %}
+    {% if is_error_in_request_syntax %}
+    <div class="row">
+        <div class="col">
+            Ошибка в синтаксисе поискового запроса
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        {% for snippet in snippets %}
+        <div class="container border bottom-buffer">
+            <div class="row">
+                <div class="col" style="font-size: medium;">
+                    <a href="{{ snippet.link }}">{{ snippet.title }}</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="font-size: small;">
+                    <a href="{{ snippet.link }}">{{ snippet.link }}</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="font-size: small;">
+                    <p>{{ snippet.text }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col inline-block">
+            <div class="text-right">
+            {% if number_pages > 0 %}
+                {% if page == 1 %}
+                1
+                {% else %}
+            <a href="{{ page_path }}&page=1">1</a>
+                {% endif %}
+            {% if page|diff:width_paginator > 2 %}
+            ...
+            {% endif %}
+            {% for paginator_page_id in window_pages %}
+                {% if page == paginator_page_id %}
+                {{ page }}
+                {% else %}
+            <a href="{{ page_path }}&page={{ paginator_page_id }}">{{paginator_page_id}}</a>
+                {% endif %}
+            {% endfor %}
+            {% if page|add:width_paginator < number_pages|diff:1 %}
+            ...
+            {% endif %}
+            {% if number_pages > 1 %}
+                {% if page == number_pages %}
+                {{ page }}
+                {% else %}
+            <a href="{{ page_path }}&page={{ number_pages }}">{{ number_pages }}</a>
+                {% endif %}
+            {% endif %}
+            {% endif %}
+            </div>
+            <div class="text-center">
+            {% if page > 1 %}
+            <a href="{{ page_path }}&page={{ page|add:"-1" }}" class="btn btn-light btn-sm left-buffer-20 bottom-buffer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+            </svg>
+                Предыдущая страница
+            </a>
+            {% endif %}
+            {% if page|add:"1" <= number_pages %}
+            <a href="{{ page_path }}&page={{ page|add:"1" }}" class="btn btn-light btn-sm left-buffer-20 bottom-buffer ">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+            </svg>
+                Следующая страница
+            </a>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

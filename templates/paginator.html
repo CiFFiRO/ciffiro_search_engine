@@ -1,0 +1,52 @@
+{% load pages_extras %}
+<div class="row">
+    <div class="col inline-block">
+        <div class="text-right">
+        {% if number_pages > 0 %}
+            {% if page == 1 %}
+            1
+            {% else %}
+        <a href="{{ page_path }}?page=1">1</a>
+            {% endif %}
+        {% if page|diff:width_paginator > 2 %}
+        ...
+        {% endif %}
+        {% for paginator_page_id in window_pages %}
+            {% if page == paginator_page_id %}
+            {{ page }}
+            {% else %}
+        <a href="{{ page_path }}?page={{ paginator_page_id }}">{{paginator_page_id}}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page|add:width_paginator < number_pages|diff:1 %}
+        ...
+        {% endif %}
+        {% if number_pages > 1 %}
+            {% if page == number_pages %}
+            {{ page }}
+            {% else %}
+        <a href="{{ page_path }}?page={{ number_pages }}">{{ number_pages }}</a>
+            {% endif %}
+        {% endif %}
+        {% endif %}
+        </div>
+        <div class="text-center">
+        {% if page > 1 %}
+        <a href="{{ page_path }}?page={{ page|add:"-1" }}" class="btn btn-light btn-sm left-buffer-20 bottom-buffer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+        </svg>
+            Предыдущая страница
+        </a>
+        {% endif %}
+        {% if page|add:"1" <= number_pages %}
+        <a href="{{ page_path }}?page={{ page|add:"1" }}" class="btn btn-light btn-sm left-buffer-20 bottom-buffer ">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+        </svg>
+            Следующая страница
+        </a>
+        {% endif %}
+        </div>
+    </div>
+</div>
